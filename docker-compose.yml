@@ -10,6 +10,9 @@ services:
       POSTGRES_DB: base_datos_grupo
     ports:
       - "5432:5432"
+    volumes:
+      # Esta línea es la que faltaba para cargar tu init.sql
+      - ./postgres-init:/docker-entrypoint-initdb.d
     networks:
       - trino-net
 

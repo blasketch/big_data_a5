@@ -1,0 +1,35 @@
+{
+  "writerVersion" : "451",
+  "owner" : "trino",
+  "tableType" : "EXTERNAL_TABLE",
+  "dataColumns" : [ {
+    "name" : "id_venta",
+    "type" : "bigint",
+    "properties" : { }
+  }, {
+    "name" : "id_cliente",
+    "type" : "int",
+    "properties" : { }
+  }, {
+    "name" : "monto",
+    "type" : "double",
+    "properties" : { }
+  }, {
+    "name" : "fecha",
+    "type" : "timestamp",
+    "properties" : { }
+  } ],
+  "partitionColumns" : [ ],
+  "parameters" : {
+    "trino_version" : "451",
+    "trino_query_id" : "20260512_141007_00005_8kpgx",
+    "transactional" : "false",
+    "auto.purge" : "false",
+    "EXTERNAL" : "TRUE",
+    "STATS_GENERATED_VIA_STATS_TASK" : "workaround for potential lack of HIVE-12730"
+  },
+  "storageFormat" : "PARQUET",
+  "serdeParameters" : { },
+  "externalLocation" : "/opt/datalake",
+  "columnStatistics" : { }
+}

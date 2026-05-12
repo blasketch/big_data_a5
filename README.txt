@@ -58,3 +58,50 @@ Eficiencia de Recursos: El entorno se ha optimizado para ser ligero, limitando l
 
 Alta Compatibilidad: Se utiliza una versión específica del motor y configuraciones de diagnóstico de Java para garantizar que el clúster arranque correctamente en diversas arquitecturas de CPU, 
 evitando errores de instrucciones avanzadas (x86-64-v3).
+
+8. Generación de Datos (Python)
+Antes de nada, debemos generar los archivos base. Asegúrate de tener instalada la librería pandas y pyarrow.
+Después ejecutar:
+python script/generar_dataset.py
+
+9. Levantamiento con Docker
+Levanta los contenedores limpiando cualquier rastro de ejecuciones anteriores:
+
+docker-compose down -v
+docker-compose up -d
+
+10. Carga de Datos en Postgres (SQL)
+Postgres inicia con una tabla vacía. Para cargar los miles de clientes generados por el script, ejecuta este comando en tu terminal:
+
+docker exec -it postgres-db psql -U usuario_trino -d base_datos_grupo -c "TRUNCATE TABLE clientes; COPY clientes(id_cliente, nombre, pais, score_credito) FROM '/docker-entrypoint-initdb.d/clientes_seed.csv' DELIMITER ',' CSV HEADER;"
+
+Registrar el Data Lake en Trino
+
+Trino debe "mapear" los archivos Parquet para verlos como una tabla SQL.
+
+Entra en Trino: docker exec -it trino-coordinator trino
+
+Pega el siguiente bloque:CREATE SCHEMA IF NOT EXISTS hive.default;
+
+CREATE TABLE IF NOT EXISTS hive.default.ventas_historicas (
+    id_venta BIGINT,
+    id_cliente INT,
+    monto DOUBLE,
+    fecha TIMESTAMP
+)
+WITH (
+    format = 'PARQUET',
+    external_location = '/opt/datalake'
+);
+
+11. Verificación Final (Analítica de Negocio)
+Para confirmar que el clúster está procesando datos de ambas fuentes simultáneamente, ejecuta este JOIN en la consola de Trino:
+
+SELECT 
+    c.pais, 
+    COUNT(v.id_venta) AS total_operaciones,
+    ROUND(SUM(v.monto), 2) AS facturacion_total
+FROM hive.default.ventas_historicas v
+JOIN postgresql.public.clientes c ON v.id_cliente = c.id_cliente
+GROUP BY c.pais
+ORDER BY facturacion_total DESC;

@@ -1,0 +1,5 @@
+# Ignorar datos generados
+datalake/*.parquet
+postgres-init/*.csv
+# Ignorar bases de datos locales de Docker
+postgres_data/
