@@ -7,6 +7,3 @@ CREATE TABLE IF NOT EXISTS clientes (
 );
 
 
-INSERT INTO clientes (id_cliente, nombre, pais, score_credito) VALUES 
-(1, 'Empresa de Prueba 1', 'España', 700),
-(2, 'Empresa de Prueba 2', 'México', 650);
